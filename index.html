@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentBridge | Learn. Hire. Earn. Connect.</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#0A2A66',
+                        brandOrange: '#F5A623',
+                        lightBg: '#F4F6F8',
+                        darkText: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #F4F6F8;
+            color: #1F2937;
+        }
+        
+        /* Modern full-page slideshow layout */
+        .snap-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .snap-container::-webkit-scrollbar {
+            display: none;
+        }
+        .snap-section {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            height: 100vh;
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Smooth fade animations */
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .snap-section.active .reveal-element {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+    </style>
+</head>
+<body class="overflow-hidden">
+
+    <div id="gatekeeperLogin" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gray-100 space-y-6">
+            
+            <div class="flex flex-col items-center text-center space-y-2">
+                <img src="logoTB.png" alt="TalentBridge Logo" class="h-16 w-auto object-contain mb-2">
+                <p class="text-xs text-gray-500 font-medium">Please log in to enter the platform</p>
+            </div>
+
+            <form onsubmit="unlockWebsite(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] uppercase font-bold tracking-wider text-gray-500 mb-1">Username or Email</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-3.5 text-gray-400 text-xs"></i>
+                        <input type="text" id="loginUser" required placeholder="Enter your username" class="w-full text-xs pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue font-medium">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] uppercase font-bold tracking-wider text-gray-500 mb-1">Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-3.5 text-gray-400 text-xs"></i>
+                        <input type="password" id="loginPass" required placeholder="Enter your password" class="w-full text-xs pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue font-medium">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-gray-500 pt-1">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-gray-300 text-brandBlue focus:ring-0">
+                        <span>Keep me logged in</span>
+                    </label>
+                    <a href="#" class="hover:underline text-brandBlue font-medium">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="w-full bg-brandBlue text-white py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-opacity-95 transition shadow-md flex items-center justify-center space-x-2">
+                    <span>Log In & Enter</span>
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="mainWebsiteContent" class="hidden">
+        
+        <header class="fixed top-0 left-0 w-full z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 h-20">
+            <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+                
+                <div class="flex items-center space-x-4">
+                    <a href="#hero" class="flex items-center">
+                        <img src="logoTB.png" alt="TalentBridge" class="h-12 w-auto object-contain">
+                    </a>
+                    
+                    <button onclick="toggleProviderModal(true)" class="bg-brandOrange hover:bg-opacity-90 text-white text-[11px] font-bold uppercase tracking-wider px-3.5 py-2 rounded-xl transition shadow-sm flex items-center space-x-1.5">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Join as Provider</span>
+                    </button>
+                </div>
+
+                <nav class="hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-wider text-gray-500">
+                    <a href="#categories" class="hover:text-brandBlue transition">Categories</a>
+                    <a href="#profiles" class="hover:text-brandBlue transition">Hire Experts</a>
+                    <a href="#booking" class="hover:text-brandBlue transition">Book Slots</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <button onclick="lockWebsiteAgain()" class="hidden sm:inline-block text-xs font-bold text-red-600 uppercase bg-red-50 px-4 py-2.5 rounded-xl hover:bg-red-100 transition">
+                        <i class="fa-solid fa-power-off mr-1.5"></i> Logout
+                    </button>
+                    
+                    <button onclick="toggleDrawerMenu(true)" class="p-2.5 text-gray-600 hover:text-brandBlue bg-gray-50 hover:bg-gray-100 rounded-xl transition focus:outline-none" aria-label="Open menu options">
+                        <i class="fa-solid fa-bars text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div id="providerSignupModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 transition-all duration-300">
+            <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 space-y-5 relative transform scale-95 transition-transform duration-300">
+                
+                <button onclick="toggleProviderModal(false)" class="absolute top-5 right-5 text-gray-400 hover:text-red-500 transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+
+                <div class="space-y-1">
+                    <h3 class="text-lg font-black text-brandBlue tracking-tight flex items-center space-x-2">
+                        <i class="fa-solid fa-briefcase text-brandOrange"></i>
+                        <span>Register as a Service Provider</span>
+                    </h3>
+                    <p class="text-[11px] text-gray-400">List your professional local profile skills to start accepting client slot bookings.</p>
+                </div>
+
+                <form onsubmit="submitProviderRegistration(event)" class="space-y-3.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Full Professional Name</label>
+                            <input type="text" required placeholder="e.g. Liam Thompson" class="w-full text-xs px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Expert Skill Category</label>
+                            <select class="w-full text-xs px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue font-bold text-gray-700">
+                                <option>Academic Tutor</option>
+                                <option>Home Repair Technician</option>
+                                <option>UI/UX Digital Designer</option>
+                                <option>Business Strategy Consultant</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Target Service Rate ($)</label>
+                            <input type="text" required placeholder="e.g. 30/hr or 50/job" class="w-full text-xs px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Contact Phone Channel</label>
+                            <input type="tel" required placeholder="e.g. +1 555-0199" class="w-full text-xs px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Professional Bio Introduction Summary</label>
+                        <textarea rows="2" required placeholder="Tell prospective platform users about your certification history and work records..." class="w-full text-xs px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue font-medium"></textarea>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-[11px] text-brandBlue flex items-start space-x-2">
+                        <i class="fa-solid fa-shield-halved text-brandOrange mt-0.5"></i>
+                        <p class="leading-normal font-medium">Submitted data undergo our automatic background matrix review parameters before your profile badge card goes live with an initial platform **TalentScore™**.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2 pt-1">
+                        <button type="button" onclick="toggleProviderModal(false)" class="w-1/3 border border-gray-200 text-gray-500 text-xs font-bold uppercase tracking-wider py-3 rounded-xl hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit" class="w-2/3 bg-brandBlue text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl hover:bg-opacity-95 transition shadow-md">Submit Provider Application</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="hamburgerDrawerOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300" onclick="toggleDrawerMenu(false)"></div>
+        <div id="hamburgerDrawerSidePanel" class="fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out">
+            <div class="space-y-8">
+                <div class="flex items-center justify-between border-b pb-4">
+                    <span class="text-xs font-extrabold text-brandBlue uppercase tracking-widest">More Options</span>
+                    <button onclick="toggleDrawerMenu(false)" class="text-gray-400 hover:text-red-500 text-sm">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <nav class="flex flex-col space-y-4 text-xs font-bold uppercase tracking-wider text-gray-600">
+                    <a href="#hero" onclick="toggleDrawerMenu(false)" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 hover:text-brandBlue transition">
+                        <i class="fa-solid fa-house w-5"></i> <span>Home Screen</span>
+                    </a>
+                    <a href="#problem" onclick="toggleDrawerMenu(false)" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 hover:text-brandBlue transition">
+                        <i class="fa-solid fa-circle-question w-5"></i> <span>The Problem</span>
+                    </a>
+                    <a href="#solution" onclick="toggleDrawerMenu(false)" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 hover:text-brandBlue transition">
+                        <i class="fa-solid fa-circle-check w-5"></i> <span>The Solution</span>
+                    </a>
+                    <a href="#talentscore" onclick="toggleDrawerMenu(false)" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 hover:text-brandBlue transition">
+                        <i class="fa-solid fa-chart-line w-5"></i> <span>TalentScore™ Matrix</span>
+                    </a>
+                    <a href="#sdg" onclick="toggleDrawerMenu(false)" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 hover:text-brandBlue transition">
+                        <i class="fa-solid fa-globe w-5"></i> <span>UN Global Impact</span>
+                    </a>
+                    <a href="#contact" onclick="toggleDrawerMenu(false)" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 hover:text-brandBlue transition">
+                        <i class="fa-solid fa-envelope w-5"></i> <span>Contact Desk Team</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="border-t pt-4 space-y-3">
+                <button onclick="toggleDrawerMenu(false); lockWebsiteAgain();" class="w-full flex items-center justify-center space-x-2 text-xs font-bold text-red-600 uppercase bg-red-50 py-3.5 rounded-xl hover:bg-red-100 transition">
+                    <i class="fa-solid fa-power-off"></i> <span>Log Out Securely</span>
+                </button>
+                <p class="text-center text-[10px] text-gray-400 font-medium">TalentBridge Dashboard App v2.6</p>
+            </div>
+        </div>
+
+        <div class="snap-container" id="viewport-container">
+
+            <section id="hero" class="snap-section bg-gradient-to-br from-slate-50 via-white to-blue-50/40">
+                <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-12">
+                    <div class="reveal-element space-y-6">
+                        <div class="inline-flex items-center space-x-2 bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full text-xs font-bold text-brandBlue uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-brandOrange animate-pulse"></span>
+                            <span>Secure Connection Network</span>
+                        </div>
+                        <h1 class="text-5xl lg:text-6xl font-black text-brandBlue tracking-tight leading-tight">
+                            Bridging Skills with <span class="text-brandOrange">Opportunities</span>
+                        </h1>
+                        <p class="text-lg font-bold text-gray-600">
+                            Learn. Hire. Earn. Connect.
+                        </p>
+                        <p class="text-base text-gray-500 max-w-xl leading-relaxed">
+                            TalentBridge helps you find local service assistance, hire verified technicians, or find top professional tutors inside your community.
+                        </p>
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <a href="#profiles" class="bg-brandBlue text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:bg-opacity-95 transition text-sm">Find & Hire Experts</a>
+                            <a href="#categories" class="bg-white border border-gray-200 text-gray-700 font-bold px-8 py-4 rounded-xl hover:bg-gray-50 transition text-sm shadow-sm">Explore Categories</a>
+                        </div>
+                    </div>
+
+                    <div class="reveal-element delay-200 hidden lg:block h-[380px]">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-2xl p-6 h-full flex flex-col justify-between">
+                            <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                                <span class="text-xs font-bold text-emerald-600"><i class="fa-solid fa-shield-halved mr-1"></i> Verified Local Platform</span>
+                                <span class="text-xs font-mono text-gray-300">dashboard.talentbridge.org</span>
+                            </div>
+                            <div class="flex-1 flex flex-col justify-center space-y-4">
+                                <div class="p-3 bg-slate-50 border border-gray-100 rounded-xl flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-lg bg-brandBlue text-white flex items-center justify-center text-xs"><i class="fa-solid fa-graduation-cap"></i></div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-gray-800">Academic Tutors Online</h4>
+                                            <p class="text-[10px] text-gray-400">Expert private lesson matching</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold">Online</span>
+                                </div>
+                                <div class="p-3 bg-slate-50 border border-gray-100 rounded-xl flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-lg bg-brandOrange text-white flex items-center justify-center text-xs"><i class="fa-solid fa-wrench"></i></div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-gray-800">Home Repair Technicians</h4>
+                                            <p class="text-[10px] text-gray-400">Certified local area providers</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] bg-brandOrange/10 text-brandOrange px-2 py-0.5 rounded font-bold">9 Available</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="problem" class="snap-section bg-slate-900 text-white">
+                <div class="max-w-6xl mx-auto px-6 w-full space-y-12">
+                    <div class="reveal-element text-center space-y-3 max-w-2xl mx-auto">
+                        <span class="text-xs font-bold text-brandOrange tracking-widest uppercase">Market Challenges</span>
+                        <h2 class="text-4xl font-black tracking-tight">The Problem</h2>
+                        <p class="text-gray-400 text-sm">
+                            Finding high-quality help or earning extra money safely online causes major headaches for regular users:
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="reveal-element bg-white/5 border border-white/10 p-6 rounded-2xl space-y-3">
+                            <div class="w-10 h-10 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
+                            <h3 class="text-base font-bold">Fake Reviews</h3>
+                            <p class="text-xs text-gray-400">It is difficult to know if an online freelancer or repair worker is actually good or honest.</p>
+                        </div>
+                        <div class="reveal-element bg-white/5 border border-white/10 p-6 rounded-2xl space-y-3">
+                            <div class="w-10 h-10 rounded-lg bg-brandOrange/10 text-brandOrange flex items-center justify-center text-lg"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <h3 class="text-base font-bold">Low Side Earnings</h3>
+                            <p class="text-xs text-gray-400">Local experts struggle to promote their skills and find clients who pay them fairly.</p>
+                        </div>
+                        <div class="reveal-element bg-white/5 border border-white/10 p-6 rounded-2xl space-y-3">
+                            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 text-yellow-400 flex items-center justify-center text-lg"><i class="fa-solid fa-eye-slash"></i></div>
+                            <h3 class="text-base font-bold">Hidden Talent</h3>
+                            <p class="text-xs text-gray-400">Smart creators stay hidden because they do not have an official way to prove their work history.</p>
+                        </div>
+                        <div class="reveal-element bg-white/5 border border-white/10 p-6 rounded-2xl space-y-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg"><i class="fa-solid fa-money-bill-wave"></i></div>
+                            <h3 class="text-base font-bold">High Setup Fees</h3>
+                            <p class="text-xs text-gray-400">Traditional job sites take massive money cuts from hard-working gig professionals.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="solution" class="snap-section bg-white">
+                <div class="max-w-7xl mx-auto px-6 w-full space-y-12">
+                    <div class="reveal-element text-center space-y-2">
+                        <span class="text-xs font-bold text-brandBlue tracking-widest uppercase">All-In-One Ecosystem</span>
+                        <h2 class="text-4xl font-black text-brandBlue tracking-tight">The Solution</h2>
+                        <p class="text-gray-500 text-sm max-w-lg mx-auto">We combine skill training and secure hiring together into four clean options:</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="reveal-element border border-gray-100 bg-slate-50 p-6 rounded-2xl hover:border-brandBlue transition duration-300">
+                            <div class="w-10 h-10 bg-brandBlue text-white rounded-lg flex items-center justify-center text-sm mb-4"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">LEARN</h3>
+                            <p class="text-xs text-gray-500 mt-2 leading-relaxed">Book instant private help sessions with trusted teachers and corporate mentors.</p>
+                        </div>
+                        <div class="reveal-element border border-gray-100 bg-slate-50 p-6 rounded-2xl hover:border-brandBlue transition duration-300">
+                            <div class="w-10 h-10 bg-brandOrange text-white rounded-lg flex items-center justify-center text-sm mb-4"><i class="fa-solid fa-user-tie"></i></div>
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">HIRE</h3>
+                            <p class="text-xs text-gray-500 mt-2 leading-relaxed">Hire checked local service providers and remote freelancers with complete confidence.</p>
+                        </div>
+                        <div class="reveal-element border border-gray-100 bg-slate-50 p-6 rounded-2xl hover:border-brandBlue transition duration-300">
+                            <div class="w-10 h-10 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-sm mb-4"><i class="fa-solid fa-wallet"></i></div>
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">EARN</h3>
+                            <p class="text-xs text-gray-500 mt-2 leading-relaxed">Offer your specialized skills safely and build a reliable, stable second income stream.</p>
+                        </div>
+                        <div class="reveal-element border border-gray-100 bg-slate-50 p-6 rounded-2xl hover:border-brandBlue transition duration-300">
+                            <div class="w-10 h-10 bg-purple-600 text-white rounded-lg flex items-center justify-center text-sm mb-4"><i class="fa-solid fa-circle-nodes"></i></div>
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">CONNECT</h3>
+                            <p class="text-xs text-gray-500 mt-2 leading-relaxed">Grow long-term customer networks based on actual verified platform reviews.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="categories" class="snap-section bg-slate-50">
+                <div class="max-w-7xl mx-auto px-6 w-full space-y-12">
+                    <div class="reveal-element text-center md:text-left">
+                        <span class="text-xs font-bold text-brandOrange tracking-widest uppercase">Verified Skill Marketplace</span>
+                        <h2 class="text-3xl font-black text-brandBlue tracking-tight mt-1">Explore Talent Categories</h2>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 text-brandBlue flex items-center justify-center text-sm"><i class="fa-solid fa-user-graduate"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Academic Tutors</span>
+                        </div>
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-orange-50 text-brandOrange flex items-center justify-center text-sm"><i class="fa-solid fa-wrench"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Home Technicians</span>
+                        </div>
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-code"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Digital Freelancers</span>
+                        </div>
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-sm"><i class="fa-solid fa-palette"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Graphic Designers</span>
+                        </div>
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center text-sm"><i class="fa-solid fa-camera"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Photographers</span>
+                        </div>
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="fa-solid fa-handshake"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Business Mentors</span>
+                        </div>
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i class="fa-solid fa-lightbulb"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Startup Partners</span>
+                        </div>
+                        <div class="reveal-element bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-sm"><i class="fa-solid fa-briefcase"></i></div>
+                            <span class="font-bold text-xs text-gray-800">Legal Consultants</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="profiles" class="snap-section bg-white">
+                <div class="max-w-7xl mx-auto px-6 w-full space-y-10">
+                    <div class="reveal-element text-center max-w-xl mx-auto space-y-2">
+                        <span class="text-xs font-bold text-brandOrange tracking-widest uppercase">Our Available Experts</span>
+                        <h2 class="text-3xl font-black text-brandBlue tracking-tight">Hire Verified Professionals</h2>
+                        <p class="text-gray-500 text-xs">Review real background cards and click select to check their active calendar opening slots below.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="reveal-element bg-slate-50 border border-gray-100 rounded-2xl p-6 shadow-sm hover:border-brandBlue transition flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-brandBlue flex items-center justify-center text-xl"><i class="fa-solid fa-user-graduate"></i></div>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-gray-800">Sarah Jenkins</h3>
+                                        <p class="text-[11px] text-gray-400 font-medium">Professional English Tutor</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-1 text-xs text-brandOrange">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                    <span class="text-gray-500 text-[11px] font-bold ml-1">5.0 (42 reviews)</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Specializes in preparing high school students for final language tests and corporate writing excellence.</p>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-medium text-gray-600">Grammar</span>
+                                    <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-medium text-gray-600">Exam Prep</span>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-gray-200/60 mt-4 flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Rate: <strong class="text-gray-800 font-bold text-sm">$25/hr</strong></span>
+                                <a href="#booking" onclick="selectExpert('Sarah Jenkins (English Tutor)')" class="bg-brandBlue text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-lg hover:bg-opacity-95 transition">Select Expert</a>
+                            </div>
+                        </div>
+
+                        <div class="reveal-element bg-slate-50 border border-gray-100 rounded-2xl p-6 shadow-sm hover:border-brandBlue transition flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 rounded-xl bg-orange-100 text-brandOrange flex items-center justify-center text-xl"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-gray-800">Marcus Vance</h3>
+                                        <p class="text-[11px] text-gray-400 font-medium">Home Technical Engineer</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-1 text-xs text-brandOrange">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                                    <span class="text-gray-500 text-[11px] font-bold ml-1">4.8 (110 reviews)</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Fixes air conditioning faults, home electrical wiring layouts, and advanced smart device setup operations.</p>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-medium text-gray-600">Electrical</span>
+                                    <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-medium text-gray-600">Repairs</span>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-gray-200/60 mt-4 flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Rate: <strong class="text-gray-800 font-bold text-sm">$40/job</strong></span>
+                                <a href="#booking" onclick="selectExpert('Marcus Vance (Technician)')" class="bg-brandBlue text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-lg hover:bg-opacity-95 transition">Select Expert</a>
+                            </div>
+                        </div>
+
+                        <div class="reveal-element bg-slate-50 border border-gray-100 rounded-2xl p-6 shadow-sm hover:border-brandBlue transition flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl"><i class="fa-solid fa-palette"></i></div>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-gray-800">Elena Rostova</h3>
+                                        <p class="text-[11px] text-gray-400 font-medium">UI/UX Graphic Designer</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-1 text-xs text-brandOrange">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                    <span class="text-gray-500 text-[11px] font-bold ml-1">4.9 (76 reviews)</span>
+                                </div>
+                                <p class="text-xs text-gray-500 leading-relaxed">Designs beautiful custom mobile applications, presentation branding assets, and landing web interfaces.</p>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-medium text-gray-600">Figma</span>
+                                    <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-medium text-gray-600">Branding</span>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-gray-200/60 mt-4 flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Rate: <strong class="text-gray-800 font-bold text-sm">$35/hr</strong></span>
+                                <a href="#booking" onclick="selectExpert('Elena Rostova (Designer)')" class="bg-brandBlue text-white text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-lg hover:bg-opacity-95 transition">Select Expert</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="booking" class="snap-section bg-slate-50">
+                <div class="max-w-4xl mx-auto px-6 w-full space-y-8">
+                    <div class="reveal-element text-center space-y-2">
+                        <span class="text-xs font-bold text-brandBlue tracking-widest uppercase">Live Scheduler System</span>
+                        <h2 class="text-3xl font-black text-brandBlue tracking-tight">Select Booking Timing</h2>
+                        <p class="text-gray-500 text-xs">Pick your preferred calendar date and available hours to confirm your expert session.</p>
+                    </div>
+
+                    <div class="reveal-element bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between text-xs font-bold text-brandBlue">
+                        <span id="selectedExpertNotice"><i class="fa-solid fa-user-check mr-2 text-brandOrange"></i> Target Expert: Sarah Jenkins (English Tutor)</span>
+                        <span class="text-[10px] uppercase text-gray-400 font-normal">Step 2 of 2</span>
+                    </div>
+
+                    <div class="reveal-element bg-white border border-gray-100 p-6 rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="block text-xs font-bold text-gray-700 uppercase"><i class="fa-solid fa-calendar-days text-brandOrange mr-1.5"></i> 1. Choose Date</label>
+                            <input type="date" value="2026-06-08" class="w-full text-xs font-medium px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue shadow-sm text-gray-700">
+                            <p class="text-[11px] text-gray-400 leading-normal"><i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Slots lock safely based on your local area operational hours.</p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="block text-xs font-bold text-gray-700 uppercase"><i class="fa-solid fa-clock text-brandBlue mr-1.5"></i> 2. Select Available Time</label>
+                            <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+                                <button onclick="alert('09:00 AM Slot Chosen')" class="p-3 bg-white border border-gray-200 text-gray-700 rounded-xl hover:border-brandOrange transition shadow-sm text-center">09:00 AM <span class="block text-[9px] text-emerald-600 font-medium">Available</span></button>
+                                <button onclick="alert('11:30 AM Slot Chosen')" class="p-3 bg-white border border-gray-200 text-gray-700 rounded-xl hover:border-brandOrange transition shadow-sm text-center">11:30 AM <span class="block text-[9px] text-emerald-600 font-medium">Available</span></button>
+                                <button onclick="alert('02:00 PM Slot Chosen')" class="p-3 bg-brandBlue text-white border border-brandBlue rounded-xl shadow-sm text-center">02:00 PM <span class="block text-[9px] text-brandOrange font-bold">Selected</span></button>
+                                <button class="p-3 bg-gray-100 border border-gray-100 text-gray-400 rounded-xl text-center cursor-not-allowed" disabled>04:30 PM <span class="block text-[9px] font-medium">Booked</span></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reveal-element text-center pt-2">
+                        <button onclick="alert('Your booking appointment has been saved successfully!')" class="bg-brandOrange text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-md hover:bg-opacity-95 transition">
+                            Confirm Appointment Slot
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="talentscore" class="snap-section bg-brandBlue text-white">
+                <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="reveal-element space-y-5">
+                        <span class="text-xs font-bold text-brandOrange tracking-widest uppercase">Honest Verification Matrix</span>
+                        <h2 class="text-4xl font-black tracking-tight leading-tight">Trust Built Into Every Connection</h2>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            Our review score algorithm, <strong>TalentScore™</strong>, checks real data markers to rank platform service providers fairly:
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-4 text-xs font-semibold text-blue-100">
+                            <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brandOrange"></i> <span>Completed Tasks</span></div>
+                            <div class="flex items-center space-x-2"><i class="fa-solid fa-star text-brandOrange"></i> <span>Genuine User Reviews</span></div>
+                            <div class="flex items-center space-x-2"><i class="fa-solid fa-user-shield text-brandOrange"></i> <span>Identity Checks</span></div>
+                            <div class="flex items-center space-x-2"><i class="fa-solid fa-certificate text-brandOrange"></i> <span>Official Certifications</span></div>
+                        </div>
+                    </div>
+
+                    <div class="reveal-element delay-200 space-y-4 text-gray-900">
+                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 flex items-center justify-between text-white">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-full bg-slate-300 bg-[url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=120&auto=format&fit=crop')] bg-cover"></div>
+                                <div>
+                                    <h4 class="font-bold text-xs">Ahmed Rahman</h4>
+                                    <p class="text-[11px] text-blue-200">Fullstack Web Developer</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full border-2 border-brandOrange flex items-center justify-center text-xs font-black">95</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10 flex items-center justify-between text-white transform lg:translate-x-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-full bg-slate-300 bg-[url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=120&auto=format&fit=crop')] bg-cover"></div>
+                                <div>
+                                    <h4 class="font-bold text-xs">Aisha Lee</h4>
+                                    <p class="text-[11px] text-blue-200">UI/UX Layout Designer</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full border-2 border-emerald-500 flex items-center justify-center text-xs font-black">92</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sdg" class="snap-section bg-gradient-to-br from-brandBlue to-slate-950 text-white">
+                <div class="max-w-5xl mx-auto px-6 w-full space-y-12 text-center">
+                    <div class="reveal-element inline-flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>United Nations Development Mission</span>
+                    </div>
+                    
+                    <div class="reveal-element space-y-4 max-w-2xl mx-auto">
+                        <h2 class="text-4xl font-black tracking-tight">Supporting UN Goal 8</h2>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            TalentBridge connects young professionals with fair earnings, supports productive job positions, and helps small community businesses grow.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+                        <div class="reveal-element bg-white/5 border border-white/5 p-5 rounded-xl space-y-2">
+                            <i class="fa-solid fa-briefcase text-brandOrange text-base"></i>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Fair Work</h4>
+                            <p class="text-[11px] text-gray-400">Stable, safe income opportunities for everyone.</p>
+                        </div>
+                        <div class="reveal-element bg-white/5 border border-white/5 p-5 rounded-xl space-y-2">
+                            <i class="fa-solid fa-rocket text-brandOrange text-base"></i>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Growth</h4>
+                            <p class="text-[11px] text-gray-400">Helping independent entrepreneurs grow quickly.</p>
+                        </div>
+                        <div class="reveal-element bg-white/5 border border-white/5 p-5 rounded-xl space-y-2">
+                            <i class="fa-solid fa-chart-line text-brandOrange text-base"></i>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Economy</h4>
+                            <p class="text-[11px] text-gray-400">Keeping business money moving safely inside local areas.</p>
+                        </div>
+                        <div class="reveal-element bg-white/5 border border-white/5 p-5 rounded-xl space-y-2">
+                            <i class="fa-solid fa-graduation-cap text-brandOrange text-base"></i>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Up-Skilling</h4>
+                            <p class="text-[11px] text-gray-400">Improving worker expertise through stable mentor setups.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="snap-section bg-slate-900 text-white flex flex-col justify-between pt-24 pb-8">
+                <div class="max-w-6xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center flex-1">
+                    <div class="space-y-6">
+                        <h2 class="text-4xl font-black tracking-tight">Ready to transform your career path?</h2>
+                        <p class="text-gray-400 text-sm max-w-sm">
+                            Submit your message below to receive quick onboarding details directly from our operational desk team.
+                        </p>
+                        <div class="space-y-2 text-xs text-gray-400">
+                            <p class="flex items-center"><i class="fa-solid fa-envelope text-brandOrange w-6"></i> support@talentbridge.org</p>
+                            <p class="flex items-center"><i class="fa-solid fa-location-dot text-brandOrange w-6"></i> Tech Hub Plaza, Central Office Space</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white text-gray-900 p-6 rounded-2xl shadow-2xl space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Name</label>
+                                <input type="text" placeholder="Alex Chen" class="w-full text-xs font-medium px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Email</label>
+                                <input type="email" placeholder="alex@domain.com" class="w-full text-xs font-medium px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">Message</label>
+                            <textarea rows="2" placeholder="Tell us what you need help with..." class="w-full text-xs font-medium px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brandBlue"></textarea>
+                        </div>
+                        <button onclick="alert('Thank you! We will reply via email soon.')" class="w-full bg-brandBlue text-white py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-opacity-95 transition shadow-md">
+                            Send Message
+                        </button>
+                    </div>
+                </div>
+
+                <div class="max-w-7xl mx-auto px-6 w-full border-t border-white/10 pt-8 mt-8 flex flex-col md:flex-row items-center justify-between text-[11px] text-gray-500 gap-4">
+                    <span class="text-sm font-bold tracking-tight text-white">Talent<span class="text-brandOrange">Bridge</span></span>
+                    <div class="flex space-x-6">
+                        <a href="#" class="hover:text-white transition">About Us</a>
+                        <a href="#" class="hover:text-white transition">Services</a>
+                        <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    </div>
+                    <p>&copy; 2026 TalentBridge. All rights reserved.</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script>
+        // Toggle Provider Form Signup Overlay Modal Screen
+        function toggleProviderModal(show) {
+            const modal = document.getElementById('providerSignupModal');
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // Simulates application alert handling
+        function submitProviderRegistration(event) {
+            event.preventDefault();
+            alert("Success! Your service provider registration file profile has been logged on our platform verification queue desk.");
+            toggleProviderModal(false);
+        }
+
+        // Hamburger Drawer Slide Animation Controller
+        function toggleDrawerMenu(open) {
+            const overlay = document.getElementById('hamburgerDrawerOverlay');
+            const sidePanel = document.getElementById('hamburgerDrawerSidePanel');
+            
+            if (open) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    sidePanel.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                overlay.classList.add('opacity-0');
+                sidePanel.classList.add('translate-x-full');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Unlocks website page after login click 
+        function unlockWebsite(event) {
+            event.preventDefault();
+            
+            const userField = document.getElementById('loginUser').value;
+            const passField = document.getElementById('loginPass').value;
+
+            if(userField.trim() !== "" && passField.trim() !== "") {
+                document.getElementById('gatekeeperLogin').classList.add('hidden');
+                document.getElementById('mainWebsiteContent').classList.remove('hidden');
+                document.body.classList.remove('overflow-hidden');
+                
+                startScrollEngine();
+            }
+        }
+
+        // Relocks the interface back to safety
+        function lockWebsiteAgain() {
+            document.getElementById('gatekeeperLogin').classList.remove('hidden');
+            document.getElementById('mainWebsiteContent').classList.add('hidden');
+            document.body.classList.add('overflow-hidden');
+            document.getElementById('loginUser').value = "";
+            document.getElementById('loginPass').value = "";
+        }
+
+        // Custom expert target choice updates
+        function selectExpert(expertName) {
+            document.getElementById('selectedExpertNotice').innerHTML = `<i class="fa-solid fa-user-check mr-2 text-brandOrange"></i> Target Expert: ${expertName}`;
+        }
+
+        // Slideshow Scroll Animator Engine
+        function startScrollEngine() {
+            const sections = document.querySelectorAll(".snap-section");
+            const container = document.getElementById("viewport-container");
+
+            const observerOptions = {
+                root: container,
+                threshold: 0.4
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        }
+    </script>
+</body>
+</html>
